@@ -3,7 +3,7 @@
 A simple utility that converts a markdown file to HTML.
 
 ```
-$ go get github.com/h8liu/gogfm2
+$ go get github.com/h8liu/gadgets/gogfm2
 ```
 
 ## Usage
