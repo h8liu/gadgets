@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	gfm "github.com/shurcooL/github_flavored_markdown"
+	"shanhu.io/misc/markdown"
 )
 
 func errExit(err error) {
@@ -29,7 +29,7 @@ func main() {
 	bs, err := ioutil.ReadFile(args[0])
 	errExit(err)
 
-	result := gfm.Markdown(bs)
+	result := markdown.ToHTML(bs)
 
 	if *output != "" {
 		errExit(ioutil.WriteFile(*output, result, 0666))
