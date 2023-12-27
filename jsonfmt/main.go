@@ -5,13 +5,12 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 )
 
 func format(in, out string) error {
-	bs, err := ioutil.ReadFile(in)
+	bs, err := os.ReadFile(in)
 	if err != nil {
 		return err
 	}

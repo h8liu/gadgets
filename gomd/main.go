@@ -4,7 +4,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"shanhu.io/g/markdown"
@@ -26,13 +25,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	bs, err := ioutil.ReadFile(args[0])
+	bs, err := os.ReadFile(args[0])
 	errExit(err)
 
 	result := markdown.ToHTML(bs)
 
 	if *output != "" {
-		errExit(ioutil.WriteFile(*output, result, 0666))
+		errExit(os.WriteFile(*output, result, 0666))
 	} else {
 		_, err := os.Stdout.Write(result)
 		errExit(err)

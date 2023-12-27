@@ -5,7 +5,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"flag"
@@ -24,7 +23,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	bytes, e := ioutil.ReadFile(args[0])
+	bytes, e := os.ReadFile(args[0])
 	if e != nil {
 		fmt.Fprintln(os.Stderr, e)
 		os.Exit(1)
