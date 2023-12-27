@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"shanhu.io/misc/markdown"
+	"shanhu.io/g/markdown"
 )
 
 func errExit(err error) {
