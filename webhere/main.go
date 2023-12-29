@@ -15,7 +15,6 @@ type flags struct {
 }
 
 func run(ctx context.Context, f *flags, onReady func(addr string)) error {
-
 	s := &http.Server{
 		Handler: http.FileServer(http.Dir(f.dir)),
 		Addr:    f.addr,
