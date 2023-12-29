@@ -11,9 +11,11 @@ import (
 )
 
 func main() {
-	varName := flag.String("var", "v", "variable name")
-	packName := flag.String("pack", "main", "package name")
-	style := flag.String("lang", "go", "language name")
+	var (
+		varName  = flag.String("var", "v", "variable name")
+		packName = flag.String("pack", "main", "package name")
+		style    = flag.String("lang", "go", "language name")
+	)
 	flag.Parse()
 
 	args := flag.Args()
