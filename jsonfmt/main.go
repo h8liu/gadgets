@@ -4,33 +4,27 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
-	"io"
+	"fmt"
 	"log"
 	"os"
 )
 
-func format(in, out string) error {
+func formatFile(in, out string) error {
 	bs, err := os.ReadFile(in)
 	if err != nil {
-		return err
+		return fmt.Errorf("read file: %w", err)
 	}
 
 	dest := new(bytes.Buffer)
 	if err := json.Indent(dest, bs, "", "  "); err != nil {
-		return err
+		return fmt.Errorf("json encode: %w", err)
 	}
 
-	fout, err := os.Create(out)
-	if err != nil {
-		return err
-	}
-	defer fout.Close()
-
-	if _, err := io.Copy(fout, dest); err != nil {
-		return err
+	if err := os.WriteFile(out, dest.Bytes(), 0644); err != nil {
+		return fmt.Errorf("create file: %w", err)
 	}
 
-	return fout.Close()
+	return nil
 }
 
 func main() {
@@ -41,14 +35,14 @@ func main() {
 
 	if len(args) != 0 {
 		for _, f := range args {
-			if err := format(f, f); err != nil {
+			if err := formatFile(f, f); err != nil {
 				log.Fatal(err)
 			}
 		}
 		return
 	}
 
-	if err := format(*in, *out); err != nil {
+	if err := formatFile(*in, *out); err != nil {
 		log.Fatal(err)
 	}
 }

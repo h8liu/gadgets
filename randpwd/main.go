@@ -26,8 +26,7 @@ func makeRunes() []rune {
 
 func randUint32() uint32 {
 	buf := make([]byte, 4)
-	_, err := rand.Reader.Read(buf)
-	if err != nil {
+	if _, err := rand.Reader.Read(buf); err != nil {
 		log.Fatal(err)
 	}
 	return binary.LittleEndian.Uint32(buf)

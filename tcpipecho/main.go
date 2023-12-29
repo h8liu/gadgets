@@ -7,24 +7,15 @@ import (
 	"net"
 )
 
-func logError(e error) {
-	if e != nil {
-		log.Print(e)
-	}
-}
-
-func noError(e error) {
-	if e != nil {
-		log.Fatal(e)
-	}
-}
-
 func serve(c *net.TCPConn) {
 	ret := c.RemoteAddr().(*net.TCPAddr).IP.String()
-	_, err := c.Write([]byte(ret))
-	logError(err)
-	err = c.Close()
-	logError(err)
+	if _, err := c.Write([]byte(ret)); err != nil {
+		log.Print("write: ", err)
+	}
+
+	if err := c.Close(); err != nil {
+		log.Print("close: ", err)
+	}
 }
 
 func main() {
@@ -33,16 +24,22 @@ func main() {
 
 	iface := fmt.Sprintf(":%d", *port)
 	addr, err := net.ResolveTCPAddr("tcp4", iface)
-	noError(err)
+	if err != nil {
+		log.Fatal("resolve TCP address: ", err)
+	}
 
 	lis, err := net.ListenTCP("tcp4", addr)
-	noError(err)
+	if err != nil {
+		log.Fatal("listen: ", err)
+	}
 
 	log.Printf("rawipecho listening on port: %d", port)
 
 	for {
 		con, err := lis.AcceptTCP()
-		noError(err)
+		if err != nil {
+			log.Fatal("accept: ", err)
+		}
 
 		go serve(con)
 	}

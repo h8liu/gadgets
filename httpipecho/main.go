@@ -3,18 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
-	"os"
 )
 
 func handler(w http.ResponseWriter, req *http.Request) {
-	addr, e := net.ResolveTCPAddr("tcp", req.RemoteAddr)
-	if e != nil {
-		fmt.Fprintf(w, "error: %s", addr)
-	} else {
-		fmt.Fprintf(w, addr.IP.String())
+	addr, err := net.ResolveTCPAddr("tcp", req.RemoteAddr)
+	if err != nil {
+		errStr := fmt.Sprintf("invalid address: %s", err)
+		http.Error(w, errStr, http.StatusBadRequest)
+		return
 	}
+
+	fmt.Fprint(w, addr.IP.String())
 }
 
 func main() {
@@ -23,9 +25,10 @@ func main() {
 
 	fmt.Printf("httpipecho listen on port: %d\n", port)
 	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+
+	addr := fmt.Sprintf(":%d", port)
+
+	if err := http.ListenAndServe(addr, nil); err != nil {
+		log.Fatal(err)
 	}
 }

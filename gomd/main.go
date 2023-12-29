@@ -4,17 +4,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"shanhu.io/g/markdown"
 )
-
-func errExit(err error) {
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-}
 
 func main() {
 	output := flag.String("out", "", "output file")
@@ -26,14 +20,19 @@ func main() {
 	}
 
 	bs, err := os.ReadFile(args[0])
-	errExit(err)
+	if err != nil {
+		log.Fatal("read file: ", err)
+	}
 
 	result := markdown.ToHTML(bs)
 
 	if *output != "" {
-		errExit(os.WriteFile(*output, result, 0666))
+		if err := os.WriteFile(*output, result, 0644); err != nil {
+			log.Fatal("write file: ", err)
+		}
 	} else {
-		_, err := os.Stdout.Write(result)
-		errExit(err)
+		if _, err := os.Stdout.Write(result); err != nil {
+			log.Fatal("write: ", err)
+		}
 	}
 }
