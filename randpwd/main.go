@@ -33,6 +33,9 @@ func randUint32() uint32 {
 }
 
 func randPassword(n int) string {
+	// TODO: while this is ok, would be nice if this function guarantees
+	// that it always contains all types of characters.
+
 	runes := makeRunes()
 	nrune := uint32(len(runes))
 	pwd := ""
