@@ -8,6 +8,6 @@ import (
 
 func main() {
 	for {
-		time.Sleep(time.Hour)
+		time.Sleep(24 * time.Hour)
 	}
 }
