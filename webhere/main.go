@@ -15,22 +15,6 @@ type flags struct {
 }
 
 func run(ctx context.Context, f *flags, onReady func(addr string)) error {
-	s := &http.Server{
-		Handler: http.FileServer(http.Dir(f.dir)),
-		Addr:    f.addr,
-	}
-
-	done := make(chan struct{})
-	defer close(done)
-
-	go func() {
-		select {
-		case <-ctx.Done():
-			s.Close()
-		case <-done:
-		}
-	}()
-
 	lis, err := net.Listen("tcp", f.addr)
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
@@ -42,8 +26,24 @@ func run(ctx context.Context, f *flags, onReady func(addr string)) error {
 		onReady(actualAddr)
 	}
 
-	if err := s.Serve(lis); err != nil && err != http.ErrServerClosed {
-		return err
+	s := &http.Server{Handler: http.FileServer(http.Dir(f.dir))}
+
+	errChan := make(chan error)
+	go func() { errChan <- s.Serve(lis) }()
+
+	select {
+	case <-ctx.Done():
+		s.Close()
+		<-errChan // Join the background server.
+
+		// Only return error if it is cancelled context.
+		if err := ctx.Err(); err != context.Canceled {
+			return err
+		}
+	case err := <-errChan:
+		if err != nil && err != http.ErrServerClosed {
+			return err
+		}
 	}
 
 	return nil
