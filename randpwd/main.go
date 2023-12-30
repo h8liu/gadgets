@@ -32,16 +32,21 @@ func randUint32() uint32 {
 	return binary.LittleEndian.Uint32(buf)
 }
 
-func main() {
-	length := flag.Int("n", 16, "password length")
-	flag.Parse()
-
+func randPassword(n int) string {
 	runes := makeRunes()
 	nrune := uint32(len(runes))
 	pwd := ""
-	for i := 0; i < *length; i++ {
+	for i := 0; i < n; i++ {
 		r := runes[randUint32()%nrune]
 		pwd += string(r)
 	}
-	fmt.Println(pwd)
+
+	return pwd
+}
+
+func main() {
+	n := flag.Int("n", 16, "password length")
+	flag.Parse()
+
+	fmt.Println(randPassword(*n))
 }
